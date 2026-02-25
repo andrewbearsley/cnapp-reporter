@@ -9,6 +9,7 @@ import AlertsPage from './pages/AlertsPage'
 import InstancesPage from './pages/InstancesPage'
 import SettingsPage from './pages/SettingsPage'
 import CompliancePage from './pages/CompliancePage'
+import IdentitiesPage from './pages/IdentitiesPage'
 import VulnerabilitiesPage from './pages/VulnerabilitiesPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -64,6 +65,7 @@ export default function App() {
               <Route path="/" element={<DashboardPage />} />
               <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/compliance" element={<CompliancePage />} />
+              <Route path="/identities" element={<IdentitiesPage />} />
               <Route path="/vulnerabilities" element={<VulnerabilitiesPage />} />
               <Route path="/instances" element={<InstancesPage />} />
               <Route path="/settings" element={<SettingsPage />} />

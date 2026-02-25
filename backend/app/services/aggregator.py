@@ -36,12 +36,13 @@ async def _fetch_instance_data(instance: Instance) -> dict:
         instance.base_url, instance.api_key_id, secret, instance.sub_account
     )
     try:
-        alerts, composite_alerts, host_vulns, container_vulns, compliance = await asyncio.gather(
+        alerts, composite_alerts, host_vulns, container_vulns, compliance, identities = await asyncio.gather(
             client.get_alerts(max_severity="Critical"),
             client.search_composite_alerts(lookback_days=90),
             client.search_host_vulns(severity="High"),
             client.search_container_vulns(severity="High"),
             client.get_compliance_evaluations(),
+            client.get_identities(lookback_days=7),
             return_exceptions=False,
         )
         # Merge: critical alerts + all composite alerts (deduped)
@@ -56,6 +57,7 @@ async def _fetch_instance_data(instance: Instance) -> dict:
             "host_vulns": host_vulns,
             "container_vulns": container_vulns,
             "compliance": compliance,
+            "identities": identities,
             "error": None,
         }
     except Exception as e:
@@ -66,6 +68,7 @@ async def _fetch_instance_data(instance: Instance) -> dict:
             "host_vulns": [],
             "container_vulns": [],
             "compliance": [],
+            "identities": [],
             "error": str(e),
         }
     finally:
@@ -112,7 +115,7 @@ def _build_vuln_entries(instance_name: str, vulns: list[dict]) -> list[VulnEntry
             "severity": v.get("severity", "Unknown"),
             "package": feature.get("name") if isinstance(feature, dict) else None,
             "version": feature.get("version") if isinstance(feature, dict) else None,
-            "fix_version": fix_info.get("fixedVersion") if isinstance(fix_info, dict) else None,
+            "fix_version": fix_info.get("fixed_version", fix_info.get("fixedVersion")) if isinstance(fix_info, dict) else None,
             "host_count": 1,
             "status": v.get("status", "Active"),
         }
@@ -184,6 +187,7 @@ async def get_dashboard_summary(db: AsyncSession) -> DashboardSummary:
                 "host_vulns": [],
                 "container_vulns": [],
                 "compliance": [],
+                "identities": [],
                 "error": str(data),
             }
 

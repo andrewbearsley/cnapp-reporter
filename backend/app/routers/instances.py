@@ -159,7 +159,7 @@ async def sync_instance(
     await db.execute(delete(CachedData).where(CachedData.instance_id == instance_id))
 
     # Store each data type
-    for data_type in ("alerts", "host_vulns", "container_vulns", "compliance"):
+    for data_type in ("alerts", "host_vulns", "container_vulns", "compliance", "identities"):
         db.add(CachedData(
             instance_id=instance_id,
             data_type=data_type,
@@ -176,6 +176,7 @@ async def sync_instance(
         "alerts": len(data.get("alerts", [])),
         "host_vulns": len(data.get("host_vulns", [])),
         "compliance": len(data.get("compliance", [])),
+        "identities": len(data.get("identities", [])),
         "error": data.get("error"),
     }
 

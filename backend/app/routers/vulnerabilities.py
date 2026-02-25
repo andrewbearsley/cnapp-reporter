@@ -84,7 +84,7 @@ async def get_vulnerabilities(
                     severity=item.get("severity", "Unknown"),
                     package=feature.get("name") if isinstance(feature, dict) else None,
                     version=feature.get("version") if isinstance(feature, dict) else None,
-                    fix_version=fix_info.get("fixedVersion") if isinstance(fix_info, dict) else None,
+                    fix_version=fix_info.get("fixed_version", fix_info.get("fixedVersion")) if isinstance(fix_info, dict) else None,
                     hostname=hostname,
                     external_ip=external_ip,
                     instance_id_tag=instance_id,

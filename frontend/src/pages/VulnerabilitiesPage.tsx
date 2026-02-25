@@ -13,7 +13,7 @@ export default function VulnerabilitiesPage() {
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [instanceFilter, setInstanceFilter] = useState<string>('all')
-  const [severityFilter] = useState<string>('Critical')
+  const [severityFilter, setSeverityFilter] = useState<string>('Critical')
   const [internetExposed, setInternetExposed] = useState(true)
   const [fixableOnly, setFixableOnly] = useState(false)
 
@@ -180,10 +180,10 @@ export default function VulnerabilitiesPage() {
         <Globe className="h-8 w-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
         <div>
           <p className="text-sm text-gray-900 dark:text-white font-medium">
-            {totalCritical.toLocaleString()} critical vulnerabilities across {data.instances.length} instances
+            {exposedCritical.toLocaleString()} critical internet-exposed vulnerabilities on {exposedHosts} host{exposedHosts !== 1 ? 's' : ''}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            {exposedCritical.toLocaleString()} internet-exposed on {exposedHosts} host{exposedHosts !== 1 ? 's' : ''} &middot; {(totalCritical - exposedCritical).toLocaleString()} internal only
+            {totalCritical.toLocaleString()} critical total across {data.instances.length} instances &middot; {(totalCritical - exposedCritical).toLocaleString()} internal only
           </p>
         </div>
       </div>
@@ -201,9 +201,9 @@ export default function VulnerabilitiesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{inst.instance_name}</p>
-                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">{inst.critical_count.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">{(exposedByInstance.get(inst.instance_name) ?? 0).toLocaleString()}</p>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                  Critical total &middot; {(exposedByInstance.get(inst.instance_name) ?? 0).toLocaleString()} exposed
+                  Exposed &middot; {inst.critical_count.toLocaleString()} critical total
                 </p>
               </div>
               <Bug className="h-8 w-8 text-blue-300 dark:text-blue-500/30" />
@@ -215,9 +215,16 @@ export default function VulnerabilitiesPage() {
       {/* Filter toggles */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1.5 rounded-lg text-xs font-medium border bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40">
+          <button
+            onClick={() => setSeverityFilter(severityFilter === 'Critical' ? 'all' : 'Critical')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              severityFilter === 'Critical'
+                ? 'bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 dark:hover:border-gray-600'
+            }`}
+          >
             Critical Only
-          </span>
+          </button>
           <button
             onClick={() => setInternetExposed(!internetExposed)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1.5 ${

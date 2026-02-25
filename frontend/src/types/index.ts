@@ -150,6 +150,50 @@ export interface AlertPageData {
   items: AlertEntry[]
 }
 
+// Identities page
+export interface IdentityAccessKey {
+  key_id: string
+  active: boolean
+  last_used: string | null
+  created: string | null
+  hard_coded: boolean
+}
+
+export interface IdentityEntry {
+  instance_name: string
+  principal_id: string
+  name: string
+  provider: string
+  domain_id: string
+  risk_score: number
+  risk_severity: string
+  risks: string[]
+  last_used: string | null
+  days_unused: number | null
+  created: string | null
+  entitlements_total: number
+  entitlements_unused: number
+  entitlements_unused_pct: number
+  services_total: number
+  services_unused: number
+  access_keys: IdentityAccessKey[]
+}
+
+export interface IdentityInstanceSummary {
+  instance_name: string
+  identity_count: number
+  critical_count: number
+  high_count: number
+}
+
+export interface IdentityPageData {
+  total_identities: number
+  total_critical: number
+  total_high: number
+  instances: IdentityInstanceSummary[]
+  items: IdentityEntry[]
+}
+
 // User settings
 export interface UserSettings {
   composite_alert_min_severity: string

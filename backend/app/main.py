@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import init_db
-from app.routers import alerts, auth, compliance, dashboard, instances, settings as settings_router, vulnerabilities
+from app.routers import alerts, auth, compliance, dashboard, identities, instances, settings as settings_router, vulnerabilities
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -44,6 +44,7 @@ app.include_router(instances.router, prefix="/api/instances", tags=["instances"]
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["dashboard"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["alerts"])
 app.include_router(compliance.router, prefix="/api/compliance", tags=["compliance"])
+app.include_router(identities.router, prefix="/api/identities", tags=["identities"])
 app.include_router(vulnerabilities.router, prefix="/api/vulnerabilities", tags=["vulnerabilities"])
 app.include_router(settings_router.router, prefix="/api/settings", tags=["settings"])
 

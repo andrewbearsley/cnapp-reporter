@@ -1,11 +1,12 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboard, Server, Settings, LogOut, Shield, ShieldAlert, Bug, AlertTriangle } from 'lucide-react'
+import { LayoutDashboard, Server, Settings, LogOut, Shield, ShieldAlert, Bug, AlertTriangle, Users } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/alerts', icon: AlertTriangle, label: 'Alerts' },
   { to: '/compliance', icon: ShieldAlert, label: 'Compliance' },
+  { to: '/identities', icon: Users, label: 'Identities' },
   { to: '/vulnerabilities', icon: Bug, label: 'Vulnerabilities' },
   { to: '/instances', icon: Server, label: 'Instances' },
   { to: '/settings', icon: Settings, label: 'Settings' },

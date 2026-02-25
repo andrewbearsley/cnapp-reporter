@@ -306,6 +306,26 @@ class LaceworkClient:
                 logger.error("Compliance %s: %s", dataset, e)
         return all_results
 
+    async def get_identities(self, lookback_days: int = 7) -> list[dict]:
+        """Fetch cloud identities via LQL query on LW_CE_IDENTITIES."""
+        now = datetime.now(timezone.utc)
+        start = now - timedelta(days=lookback_days)
+        body = {
+            "query": {
+                "queryText": "{ source { LW_CE_IDENTITIES I } return { I.* } }",
+            },
+            "arguments": [
+                {"name": "StartTimeRange", "value": start.strftime("%Y-%m-%dT%H:%M:%SZ")},
+                {"name": "EndTimeRange", "value": now.strftime("%Y-%m-%dT%H:%M:%SZ")},
+            ],
+        }
+        try:
+            data = await self._request("POST", "/api/v2/Queries/execute", json=body)
+            return data.get("data", [])
+        except httpx.HTTPStatusError as e:
+            logger.error("Failed to fetch identities: %s", e)
+            return []
+
     async def test_connection(self) -> tuple[bool, str]:
         try:
             await self._ensure_token()

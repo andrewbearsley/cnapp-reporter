@@ -192,6 +192,42 @@ class AlertPageData(BaseModel):
     items: list[AlertEntry]
 
 
+# Identities page
+class IdentityEntry(BaseModel):
+    instance_name: str
+    principal_id: str
+    name: str
+    provider: str
+    domain_id: str
+    risk_score: float = 0
+    risk_severity: str = "INFO"
+    risks: list[str] = []
+    last_used: str | None = None
+    days_unused: int | None = None
+    created: str | None = None
+    entitlements_total: int = 0
+    entitlements_unused: int = 0
+    entitlements_unused_pct: float = 0
+    services_total: int = 0
+    services_unused: int = 0
+    access_keys: list[dict] = []
+
+
+class IdentityInstanceSummary(BaseModel):
+    instance_name: str
+    identity_count: int
+    critical_count: int
+    high_count: int
+
+
+class IdentityPageData(BaseModel):
+    total_identities: int
+    total_critical: int
+    total_high: int
+    instances: list[IdentityInstanceSummary]
+    items: list[IdentityEntry]
+
+
 # User settings
 class UserSettingsResponse(BaseModel):
     composite_alert_min_severity: str
