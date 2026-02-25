@@ -1,0 +1,10 @@
+services:
+  reporter:
+    build: .
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-changeme-generate-a-real-secret-key-at-least-32-chars}
+    restart: unless-stopped
