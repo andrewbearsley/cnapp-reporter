@@ -16,8 +16,6 @@ Pulls together alerts, vulnerabilities, compliance issues, and identity risks fr
 
 **Vulnerabilities** - critical vulns with internet-exposure detection and fix availability.
 
-Every table supports column resizing, text search, instance filtering, and CSV export.
-
 ![Alerts](screenshots/alerts.png)
 ![Compliance](screenshots/compliance.png)
 ![Identities](screenshots/identities.png)
