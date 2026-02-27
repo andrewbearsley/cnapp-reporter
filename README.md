@@ -1,20 +1,20 @@
 # CNAPP Reporter
 
-Pulls together alerts, vulnerabilities, compliance issues, and identity risks from multiple FortiCNAPP (Lacework) tenants into one place. Runs as a single Docker container — FastAPI backend, React frontend, SQLite for local caching.
+Pulls together alerts, vulnerabilities, compliance issues, and identity risks from multiple FortiCNAPP (Lacework) tenants into one place. Runs as a single Docker container with a FastAPI backend, React frontend, and SQLite for local caching.
 
 ![Dashboard](screenshots/dashboard.png)
 
 ## What's in it
 
-**Dashboard** gives you the high-level numbers across all instances — composite alerts, internet-exposed critical vulns, compliance failures — with drill-down tables you can filter by clicking an instance.
+**Dashboard** gives you the high-level numbers across all instances (composite alerts, internet-exposed critical vulns, compliance failures) with drill-down tables you can filter by clicking an instance.
 
-**Alerts** — composite behavioral detections (90-day lookback).
+**Alerts** - composite behavioral detections (90-day lookback).
 
-**Compliance** — non-compliant resources broken down by cloud provider.
+**Compliance** - non-compliant resources broken down by cloud provider.
 
-**Identities** — CIEM view: who has excessive permissions, unused credentials, stale access keys.
+**Identities** - CIEM view: who has excessive permissions, unused credentials, stale access keys.
 
-**Vulnerabilities** — critical vulns with internet-exposure detection and fix availability.
+**Vulnerabilities** - critical vulns with internet-exposure detection and fix availability.
 
 Every table supports column resizing, text search, instance filtering, and CSV export.
 
