@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AlertTriangle, Loader2, RefreshCw, Search } from 'lucide-react'
 import { getAlerts } from '../api/alerts'
+import ActionMenu from '../components/ActionMenu'
 import SeverityBadge from '../components/SeverityBadge'
 import CsvDownloadButton from '../components/CsvDownload'
 import ResizableTable from '../components/ResizableTable'
@@ -163,6 +164,7 @@ export default function AlertsPage() {
             { key: 'title', label: 'Title', defaultWidth: 320, minWidth: 150 },
             { key: 'status', label: 'Status', defaultWidth: 90, minWidth: 60 },
             { key: 'time', label: 'Time', defaultWidth: 180, minWidth: 120 },
+            { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50 },
           ]}>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
               {filtered.map((alert, i) => (
@@ -184,11 +186,12 @@ export default function AlertsPage() {
                   <td className="px-6 py-3 text-gray-500 dark:text-gray-400 text-xs whitespace-nowrap">
                     {alert.created_time ? new Date(alert.created_time).toLocaleString() : '-'}
                   </td>
+                  <td className="px-6 py-3"><ActionMenu /></td>
                 </tr>
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
+                  <td colSpan={8} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                     {search ? `No alerts matching "${search}"` : 'No composite alerts found. Adjust the severity filter in Settings if needed.'}
                   </td>
                 </tr>

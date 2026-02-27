@@ -22,10 +22,7 @@ export default function Layout() {
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-navy-800">
           <Shield className="h-8 w-8 text-green-500" />
-          <div>
-            <h1 className="text-sm font-bold text-white leading-tight">CNAPP</h1>
-            <p className="text-xs text-navy-300">Reporter</p>
-          </div>
+          <h1 className="text-base leading-tight"><span className="font-bold text-white">CNAPP</span> <span className="text-navy-300">Reporter</span></h1>
         </div>
 
         {/* Navigation */}

@@ -69,7 +69,7 @@ export default function CompliancePage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Compliance</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Non-compliant policies across all instances (last 24 hours)
+            Non-compliant resources across all instances (last 24 hours)
           </p>
         </div>
         <button
@@ -96,7 +96,7 @@ export default function CompliancePage() {
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{inst.instance_name}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">{inst.critical_count}</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Non-compliant policies</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Non-compliant resources</p>
               </div>
               <ShieldAlert className="h-8 w-8 text-blue-300 dark:text-blue-500/30" />
             </div>
@@ -119,7 +119,7 @@ export default function CompliancePage() {
       {/* Table */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-4">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-white flex-shrink-0">Non-Compliant Policies ({filtered.length})</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white flex-shrink-0">Non-Compliant Resources ({filtered.length})</h2>
           {instanceFilter !== 'all' && (
             <button
               onClick={() => setInstanceFilter('all')}
@@ -159,8 +159,7 @@ export default function CompliancePage() {
             { key: 'instance', label: 'Instance', defaultWidth: 160, minWidth: 100 },
             { key: 'severity', label: 'Severity', defaultWidth: 100, minWidth: 80 },
             { key: 'cloud', label: 'Cloud', defaultWidth: 100, minWidth: 70 },
-            { key: 'section', label: 'Section', defaultWidth: 140, minWidth: 80 },
-            { key: 'title', label: 'Title', defaultWidth: 300, minWidth: 150 },
+            { key: 'title', label: 'Title', defaultWidth: 350, minWidth: 150 },
             { key: 'resource', label: 'Resource', defaultWidth: 220, minWidth: 100 },
             { key: 'region', label: 'Region', defaultWidth: 130, minWidth: 80 },
             { key: 'reason', label: 'Reason', defaultWidth: 260, minWidth: 120 },
@@ -171,15 +170,14 @@ export default function CompliancePage() {
                   <td className="px-6 py-3 text-gray-600 dark:text-gray-300 truncate">{item.instance_name}</td>
                   <td className="px-6 py-3"><SeverityBadge severity={item.severity} /></td>
                   <td className="px-6 py-3 text-gray-500 dark:text-gray-400 text-xs truncate">{item.dataset.replace('Compliance', '')}</td>
-                  <td className="px-6 py-3 text-gray-500 dark:text-gray-400 text-xs truncate">{item.section ?? '-'}</td>
                   <td className="px-6 py-3 text-gray-900 dark:text-white truncate" title={item.title}>{item.title}</td>
                   <td className="px-6 py-3 text-gray-500 dark:text-gray-400 text-xs truncate font-mono" title={item.resource ?? ''}>{item.resource ?? '-'}</td>
                   <td className="px-6 py-3 text-gray-500 dark:text-gray-400 text-xs truncate">{item.region ?? '-'}</td>
-                  <td className="px-6 py-3 text-gray-400 dark:text-gray-500 text-xs truncate" title={item.reason ?? ''}>{item.reason ?? '-'}</td>
+                  <td className="px-6 py-3 text-gray-400 dark:text-gray-500 text-xs break-words whitespace-normal">{item.reason ?? '-'}</td>
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
+                <tr><td colSpan={7} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">
                   {search ? `No compliance issues matching "${search}"` : 'No matching compliance issues'}
                 </td></tr>
               )}

@@ -184,7 +184,7 @@ export default function IdentitiesPage() {
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300"
+            className="pl-3 pr-8 py-1.5 rounded-lg text-xs font-medium border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300"
           >
             <option value="all">All Severities</option>
             <option value="CRITICAL">Critical</option>
@@ -248,7 +248,7 @@ export default function IdentitiesPage() {
             { key: 'unused_pct', label: 'Unused %', defaultWidth: 90, minWidth: 70, align: 'center' },
             { key: 'last_used', label: 'Last Used', defaultWidth: 130, minWidth: 90 },
             { key: 'keys', label: 'Keys', defaultWidth: 60, minWidth: 45, align: 'center' },
-            { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50, align: 'center' },
+            { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50 },
           ]}>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
               {filtered.slice(0, 200).map((item, i) => (
@@ -300,7 +300,7 @@ export default function IdentitiesPage() {
                       <span className="font-medium">{item.access_keys.length}</span>
                     ) : '-'}
                   </td>
-                  <td className="px-6 py-3 text-center"><ActionMenu /></td>
+                  <td className="px-6 py-3"><ActionMenu /></td>
                 </tr>
               ))}
               {filtered.length === 0 && (

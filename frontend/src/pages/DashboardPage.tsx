@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [refreshing, setRefreshing] = useState(false)
   const [activeTab, setActiveTab] = useState<'alerts' | 'vulns' | 'compliance'>('alerts')
   const [search, setSearch] = useState('')
+  const [instanceFilter, setInstanceFilter] = useState<string>('all')
 
   const fetchData = useCallback(async (showRefreshing = false) => {
     if (showRefreshing) setRefreshing(true)
@@ -40,30 +41,33 @@ export default function DashboardPage() {
 
   const filteredAlerts = useMemo(() => {
     if (!data) return []
-    if (!q) return data.recent_alerts
-    return data.recent_alerts.filter(a =>
-      [a.instance_name, a.severity, a.category, a.title, a.alert_type, a.description, a.status]
+    return data.recent_alerts.filter(a => {
+      const matchesInstance = instanceFilter === 'all' || a.instance_name === instanceFilter
+      const matchesSearch = !q || [a.instance_name, a.severity, a.category, a.title, a.alert_type, a.description, a.status]
         .some(v => v?.toLowerCase().includes(q))
-    )
-  }, [data, q])
+      return matchesInstance && matchesSearch
+    })
+  }, [data, q, instanceFilter])
 
   const filteredVulns = useMemo(() => {
     if (!data) return []
-    if (!q) return data.recent_vulns
-    return data.recent_vulns.filter(v =>
-      [v.instance_name, v.severity, v.vuln_id, v.package, v.version, v.fix_version, v.status]
+    return data.recent_vulns.filter(v => {
+      const matchesInstance = instanceFilter === 'all' || v.instance_name === instanceFilter
+      const matchesSearch = !q || [v.instance_name, v.severity, v.vuln_id, v.package, v.version, v.fix_version, v.status]
         .some(f => f?.toLowerCase().includes(q))
-    )
-  }, [data, q])
+      return matchesInstance && matchesSearch
+    })
+  }, [data, q, instanceFilter])
 
   const filteredCompliance = useMemo(() => {
     if (!data) return []
-    if (!q) return data.recent_compliance
-    return data.recent_compliance.filter(c =>
-      [c.instance_name, c.severity, c.title, c.resource, c.policy_id, c.status]
+    return data.recent_compliance.filter(c => {
+      const matchesInstance = instanceFilter === 'all' || c.instance_name === instanceFilter
+      const matchesSearch = !q || [c.instance_name, c.severity, c.title, c.resource, c.policy_id, c.status]
         .some(f => f?.toLowerCase().includes(q))
-    )
-  }, [data, q])
+      return matchesInstance && matchesSearch
+    })
+  }, [data, q, instanceFilter])
 
   if (loading) {
     return (
@@ -169,7 +173,15 @@ export default function DashboardPage() {
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
               {data.instances.map((inst) => (
-                <tr key={inst.instance_id} className="hover:bg-gray-50 dark:hover:bg-gray-750">
+                <tr
+                  key={inst.instance_id}
+                  onClick={() => setInstanceFilter(instanceFilter === inst.instance_name ? 'all' : inst.instance_name)}
+                  className={`cursor-pointer transition-colors ${
+                    instanceFilter === inst.instance_name
+                      ? 'bg-blue-50 dark:bg-blue-500/10'
+                      : 'hover:bg-gray-50 dark:hover:bg-gray-750'
+                  }`}
+                >
                   <td className="px-6 py-3 font-medium text-gray-900 dark:text-white">{inst.instance_name}</td>
                   <td className="px-6 py-3 text-gray-500 dark:text-gray-400 font-mono text-xs">{inst.account}</td>
                   <td className="px-6 py-3"><StatusBadge status={inst.status} /></td>
@@ -200,6 +212,14 @@ export default function DashboardPage() {
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-4">
           <div className="flex items-center gap-4 flex-1">
+          {instanceFilter !== 'all' && (
+            <button
+              onClick={() => setInstanceFilter('all')}
+              className="text-xs text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 flex-shrink-0"
+            >
+              Clear filter: {instanceFilter}
+            </button>
+          )}
           <button
             onClick={() => { setActiveTab('alerts'); setSearch('') }}
             className={`text-sm font-medium pb-1 border-b-2 transition-colors ${
@@ -255,7 +275,7 @@ export default function DashboardPage() {
               { key: 'title', label: 'Title', defaultWidth: 320, minWidth: 150 },
               { key: 'status', label: 'Status', defaultWidth: 80, minWidth: 60 },
               { key: 'time', label: 'Time', defaultWidth: 170, minWidth: 120 },
-              { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50, align: 'center' },
+              { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50 },
             ]}>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
                 {filteredAlerts.map((alert, i) => (
@@ -274,7 +294,7 @@ export default function DashboardPage() {
                     <td className="px-6 py-3 text-gray-900 dark:text-white truncate" title={alert.description ?? alert.title}>{alert.title}</td>
                     <td className="px-6 py-3 text-gray-500 dark:text-gray-400 truncate">{alert.status}</td>
                     <td className="px-6 py-3 text-gray-500 dark:text-gray-400 text-xs whitespace-nowrap">{alert.created_time ? new Date(alert.created_time).toLocaleString() : '-'}</td>
-                    <td className="px-6 py-3 text-center"><ActionMenu /></td>
+                    <td className="px-6 py-3"><ActionMenu /></td>
                   </tr>
                 ))}
                 {filteredAlerts.length === 0 && (
@@ -293,7 +313,7 @@ export default function DashboardPage() {
               { key: 'version', label: 'Version', defaultWidth: 110, minWidth: 80 },
               { key: 'fix', label: 'Fix', defaultWidth: 110, minWidth: 80 },
               { key: 'hosts', label: 'Hosts', defaultWidth: 60, minWidth: 50, align: 'center' },
-              { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50, align: 'center' },
+              { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50 },
             ]}>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
                 {filteredVulns.map((vuln, i) => (
@@ -305,7 +325,7 @@ export default function DashboardPage() {
                     <td className="px-6 py-3 text-gray-500 dark:text-gray-400 font-mono text-xs truncate">{vuln.version ?? '-'}</td>
                     <td className="px-6 py-3 text-green-600 dark:text-green-400 font-mono text-xs truncate">{vuln.fix_version ?? '-'}</td>
                     <td className="px-6 py-3 text-center text-gray-600 dark:text-gray-300">{vuln.host_count}</td>
-                    <td className="px-6 py-3 text-center"><ActionMenu /></td>
+                    <td className="px-6 py-3"><ActionMenu /></td>
                   </tr>
                 ))}
                 {filteredVulns.length === 0 && (
@@ -322,7 +342,7 @@ export default function DashboardPage() {
               { key: 'title', label: 'Title', defaultWidth: 350, minWidth: 200 },
               { key: 'resource', label: 'Resource', defaultWidth: 220, minWidth: 100 },
               { key: 'status', label: 'Status', defaultWidth: 100, minWidth: 70 },
-              { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50, align: 'center' },
+              { key: 'action', label: 'Action', defaultWidth: 60, minWidth: 50 },
             ]}>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
                 {filteredCompliance.map((item, i) => (
@@ -347,7 +367,7 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-6 py-3 text-gray-500 dark:text-gray-400 text-xs truncate" title={item.resource ?? ''}>{item.resource ?? '-'}</td>
                     <td className="px-6 py-3 text-red-600 dark:text-red-400 text-xs">{item.status}</td>
-                    <td className="px-6 py-3 text-center"><ActionMenu /></td>
+                    <td className="px-6 py-3"><ActionMenu /></td>
                   </tr>
                 ))}
                 {filteredCompliance.length === 0 && (
