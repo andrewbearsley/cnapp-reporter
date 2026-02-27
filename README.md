@@ -1,94 +1,74 @@
 # CNAPP Reporter
 
-Single-container full-stack application that aggregates critical security data across multiple FortiCNAPP (Lacework) tenants into a unified dashboard.
+Pulls together alerts, vulnerabilities, compliance issues, and identity risks from multiple FortiCNAPP (Lacework) tenants into one place. Runs as a single Docker container — FastAPI backend, React frontend, SQLite for local caching.
 
-## Features
-
-- **Dashboard** — Aggregated security posture with stat cards, instance overview, and tabbed detail tables (alerts, vulnerabilities, compliance)
-- **Alerts** — Composite behavioral detections across all instances (90-day lookback)
-- **Compliance** — Non-compliant resources with severity, cloud provider, and reason detail
-- **Identities (CIEM)** — Cloud identity risk analysis: excessive permissions, unused credentials, access key hygiene
-- **Vulnerabilities** — Critical host/container vulnerabilities with internet-exposure detection and fix availability
-- **Instances** — Add, edit, test, and sync FortiCNAPP tenant connections
-- **Settings** — Severity filter threshold, sync schedule, dark/light theme toggle
-
-All pages feature resizable table columns, text search, instance filtering, and CSV export.
-
-## Screenshots
-
-### Dashboard
 ![Dashboard](screenshots/dashboard.png)
 
-### Alerts
+## What's in it
+
+**Dashboard** gives you the high-level numbers across all instances — composite alerts, internet-exposed critical vulns, compliance failures — with drill-down tables you can filter by clicking an instance.
+
+**Alerts** — composite behavioral detections (90-day lookback).
+
+**Compliance** — non-compliant resources broken down by cloud provider.
+
+**Identities** — CIEM view: who has excessive permissions, unused credentials, stale access keys.
+
+**Vulnerabilities** — critical vulns with internet-exposure detection and fix availability.
+
+Every table supports column resizing, text search, instance filtering, and CSV export.
+
 ![Alerts](screenshots/alerts.png)
-
-### Compliance
 ![Compliance](screenshots/compliance.png)
-
-### Identities (CIEM)
 ![Identities](screenshots/identities.png)
-
-### Vulnerabilities
 ![Vulnerabilities](screenshots/vulnerabilities.png)
 
-## Tech Stack
+## Tech stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | FastAPI, SQLAlchemy (async), aiosqlite, httpx |
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons |
-| Auth | JWT + bcrypt, AES-256-GCM encrypted API secrets at rest |
-| Deploy | Docker multi-stage build, SQLite volume at `/app/data` |
+FastAPI + SQLAlchemy (async) + aiosqlite on the backend, React 18 + TypeScript + Vite + Tailwind on the frontend. Auth is JWT + bcrypt, API secrets are AES-256-GCM encrypted at rest. Ships as a multi-stage Docker build with a SQLite volume at `/app/data`.
 
-## Quick Start
+## Getting started
 
-### Docker (recommended)
+### Docker
 
 ```bash
 docker compose up --build
-# Open http://localhost:8080
+# http://localhost:8080
 ```
 
-Set a proper secret key for production:
+For production, set a real secret key:
 
 ```bash
 SECRET_KEY=$(openssl rand -hex 32) docker compose up --build
 ```
 
-### Local Development
+### Local dev
 
 ```bash
 # Backend
-cd backend
-pip install -r requirements.txt
+cd backend && pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 
 # Frontend (proxies /api to backend)
-cd frontend
-npm install
-npm run dev
+cd frontend && npm install && npm run dev
 ```
 
-Frontend runs at `http://localhost:5173`, backend at `http://localhost:8000`.
+Frontend at `http://localhost:5173`, backend at `http://localhost:8000`.
 
-### First Login
+### Default login
 
-On first launch a default admin user is created:
-- **Username:** `admin`
-- **Password:** `admin123`
+Username `admin`, password `admin123`. Change it in Settings.
 
-Change the password after first login via Settings.
+## Adding instances
 
-## Adding Instances
+Go to Instances, click Add Instance. You'll need:
+- The FortiCNAPP account name (e.g. `mycompany` or `mycompany.lacework.net`)
+- An API key ID + secret (generate in FortiCNAPP under Settings > API Keys)
+- Optionally a sub-account name
 
-1. Navigate to **Instances** → **Add Instance**
-2. Enter the FortiCNAPP account name (e.g. `mycompany` or `mycompany.lacework.net`)
-3. Provide an API key ID and secret (generated in FortiCNAPP under Settings → API Keys)
-4. Optionally specify a sub-account name
-5. **Test Connection** to verify credentials
-6. Save, then **Sync** to pull data
+Hit Test Connection, save, then Sync to pull data.
 
-## Architecture
+## How it works
 
 ```
 ┌─────────────────────────────────────┐
@@ -113,8 +93,4 @@ Change the password after first login via Settings.
 └─────────────────────────────────────┘
 ```
 
-API secrets are encrypted with AES-256-GCM before storage. Synced data is cached locally in SQLite as JSON blobs per instance per data type.
-
-## License
-
-Private — not for redistribution.
+API secrets are AES-256-GCM encrypted before hitting the database. Synced data gets cached as JSON blobs per instance per data type, so the UI stays fast even if the upstream API is slow.
